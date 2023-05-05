@@ -31,13 +31,16 @@ class MainActivity : AppCompatActivity() {
         initView()
 
 
+
     }
 
     fun initView() {
         binding.imgBtn.setOnClickListener {
             search = binding.edtSearch.text.toString()
 
-            loadWallpaper()
+            data.clear()
+
+            loadWallpaper(search,page)
         }
 
         binding.nestedScr.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
@@ -45,17 +48,17 @@ class MainActivity : AppCompatActivity() {
 
             if (scrollY == v.getChildAt(0).measuredHeight - v.measuredHeight) {
                 page++
-                binding.progress.setVisibility(View.VISIBLE)
-                loadWallpaper()
+                binding.progress.visibility = View.VISIBLE
+                loadWallpaper(search,page)
             }
         })
     }
 
-    fun loadWallpaper() {
+    fun loadWallpaper(search : String,page1 : Int) {
         var apiInterface = ApiClient.getApiClient().create(ApiInterface::class.java)
         apiInterface.getData(
             search,
-            page,
+            page1,
             "AiE8mEHipmRX28hFBB1WfEyGAsQiQxNTovdKHZCVEf7pmeZSzHsq4PvM"
         ).enqueue(object : Callback<WallpaperModel> {
             override fun onResponse(
@@ -67,7 +70,7 @@ class MainActivity : AppCompatActivity() {
                 adapter = WallpaperAdapter(data)
 //                    Log.e(TAG, "onResponse: ====" + data )
 
-                binding.recycler.layoutManager = GridLayoutManager(this@MainActivity, 2)
+                binding.recycler.layoutManager = GridLayoutManager(this@MainActivity, 3)
                 binding.recycler.adapter = adapter
 
             }
